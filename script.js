@@ -337,26 +337,23 @@ function evaluateArithmetic(expr) {
 
 function parseMappingM(content) {
     const mapping = {};
-    // Regex yang lebih toleran: key bisa identifier atau ["..."]/['...']
-    const entryRegex = /([A-Za-z_][A-Za-z0-9_]*|\[\s*["'](?:\\.|[^"'\\])*["']\s*\])\s*=\s*([^,;}\n]+)/g;
+    // Regex yang lebih presisi: key identifier atau ["..."]/['...']
+    const entryRegex = /([A-Za-z_][A-Za-z0-9_]*|\[\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')\s*\])\s*=\s*([^,;}\n]+)/g;
     let m;
     while ((m = entryRegex.exec(content)) !== null) {
         let key = m[1];
         let value = m[2].trim();
 
-        // Jika key berbentuk ["..."] atau ['...']
         if (key.startsWith('[')) {
             const inner = key.slice(1, -1).trim(); // buang [ ]
             const quote = inner[0];
             const strContent = inner.slice(1, -1); // buang quotes
-            // Decode escape pada key
             key = strContent.replace(/\\(?:(\d{1,3})|x([0-9a-fA-F]{2})|.)/g, (match, dec, hex, other) => {
                 if (dec) return String.fromCharCode(parseInt(dec, 10));
                 if (hex) return String.fromCharCode(parseInt(hex, 16));
                 return other;
             });
         }
-        // key sekarang adalah karakter tunggal
 
         const val = evaluateArithmetic(value);
         if (val !== null && !isNaN(val)) {
@@ -377,17 +374,13 @@ function decodeWeAreDevsString(encoded, charToVal) {
             break;
         }
         const val = charToVal[ch];
-        if (val !== undefined) {
-            X += val * Math.pow(64, 3 - D);
-            D++;
-            if (D === 4) {
-                D = 0;
-                bytes.push(Math.floor(X / 65536), Math.floor((X % 65536) / 256), X % 256);
-                X = 0;
-            }
-        } else {
-            // Karakter tidak dikenal, hentikan dan kembalikan kosong
-            return '';
+        if (val === undefined) continue; // skip karakter tak dikenal
+        X += val * Math.pow(64, 3 - D);
+        D++;
+        if (D === 4) {
+            D = 0;
+            bytes.push(Math.floor(X / 65536), Math.floor((X % 65536) / 256), X % 256);
+            X = 0;
         }
     }
     return bytes.map(b => String.fromCharCode(b)).join('');
@@ -415,7 +408,7 @@ function tryDecodeWeAreDevs(code) {
         return decodeWeAreDevsString(jsStr, charToVal);
     });
 
-    // Jika semua hasil kosong, jangan ubah (kemungkinan gagal)
+    // Jika semua hasil kosong, jangan ubah
     if (decodedStrings.every(s => s === '')) return code;
 
     // Bangun tabel m baru
