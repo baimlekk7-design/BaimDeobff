@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BaimDeobf v2 - Lua Deobfuscator + XOR Decoder</title>
+    <title>BaimDeobf v4 - Lua Deobfuscator + Terminal Bytecode</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>BaimDeobf <span style="font-size:1.2rem; color:var(--accent)">v2</span></h1>
-            <p class="tagline">Lua Deobfuscator &amp; XOR Loop Decoder</p>
+            <h1>BaimDeobf <span style="font-size:1.2rem; color:var(--accent)">v4</span></h1>
+            <p class="tagline">Lua Deobfuscator + XOR Loop + WeAreDevs + Bytecode Tools</p>
         </header>
         <main>
             <div class="editor-pane">
-                <label for="input">Kode Lua Terobfuscation</label>
-                <textarea id="input" placeholder="Tempel kode Lua di sini..."></textarea>
+                <label for="input">Kode Lua / Bytecode Terobfuscation</label>
+                <textarea id="input" placeholder="Tempel kode Lua atau bytecode di sini..."></textarea>
                 <div class="options">
                     <label class="checkbox"><input type="checkbox" id="removeComments" checked> Hapus Komentar</label>
                     <label class="checkbox"><input type="checkbox" id="decodeEscapes" checked> Decode Escape String</label>
                     <label class="checkbox"><input type="checkbox" id="decodeBase64"> Coba Decode Base64</label>
                     <label class="checkbox"><input type="checkbox" id="renameVars"> Rename Variabel Pendek</label>
                     <label class="checkbox"><input type="checkbox" id="autoXor" checked> Auto Decode XOR Loop</label>
+                    <label class="checkbox"><input type="checkbox" id="autoWeAreDevs" checked> Coba Decode WeAreDevs</label>
                 </div>
                 <div class="actions">
                     <button id="deobfBtn" class="btn-primary">Deobfuscate</button>
                     <button id="clearBtn" class="btn-secondary">Clear</button>
                     <button id="sampleBtn" class="btn-secondary">Muat Contoh XOR</button>
+                    <button id="sampleWeAreDevsBtn" class="btn-secondary">Muat Contoh WeAreDevs</button>
                 </div>
             </div>
             <div class="editor-pane">
@@ -38,8 +40,19 @@
                 <div id="status"></div>
             </div>
         </main>
+        <section class="terminal-pane">
+            <div class="terminal-header">
+                <span>Terminal / Bytecode Tools</span>
+                <button id="helpBtn" class="btn-terminal">help</button>
+            </div>
+            <div class="terminal-input-area">
+                <input type="text" id="terminalInput" placeholder="ketik perintah... (contoh: detect, convert, extract)" />
+                <button id="runTerminalBtn" class="btn-secondary">Run</button>
+            </div>
+            <div class="terminal-output" id="terminalOutput">BaimDeobf v4 terminal siap. Ketik 'help' untuk bantuan.</div>
+        </section>
         <footer>
-            <p>BaimDeobf v2.0 - Dilengkapi Auto Decode XOR Loop untuk obfuscator sederhana</p>
+            <p>BaimDeobf v4.0 - Dilengkapi Terminal untuk Bytecode LuaJIT</p>
         </footer>
     </div>
     <script src="script.js"></script>
