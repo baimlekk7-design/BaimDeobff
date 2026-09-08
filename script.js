@@ -337,19 +337,27 @@ function evaluateArithmetic(expr) {
 
 function parseMappingM(content) {
     const mapping = {};
-    const entryRegex = /([%w]+|%[\"'](?:\\.|[^\"'\\])*[\"']%])\s*=\s*([^,;}]+)/g;
+    // Regex yang lebih toleran: key bisa identifier atau ["..."]/['...']
+    const entryRegex = /([A-Za-z_][A-Za-z0-9_]*|\[\s*["'](?:\\.|[^"'\\])*["']\s*\])\s*=\s*([^,;}\n]+)/g;
     let m;
     while ((m = entryRegex.exec(content)) !== null) {
         let key = m[1];
         let value = m[2].trim();
-        if (key.startsWith('["') || key.startsWith("['")) {
-            const inner = key.slice(2, -2);
-            key = inner.replace(/\\(?:(\d{1,3})|x([0-9a-fA-F]{2})|.)/g, (match, dec, hex, other) => {
+
+        // Jika key berbentuk ["..."] atau ['...']
+        if (key.startsWith('[')) {
+            const inner = key.slice(1, -1).trim(); // buang [ ]
+            const quote = inner[0];
+            const strContent = inner.slice(1, -1); // buang quotes
+            // Decode escape pada key
+            key = strContent.replace(/\\(?:(\d{1,3})|x([0-9a-fA-F]{2})|.)/g, (match, dec, hex, other) => {
                 if (dec) return String.fromCharCode(parseInt(dec, 10));
                 if (hex) return String.fromCharCode(parseInt(hex, 16));
                 return other;
             });
         }
+        // key sekarang adalah karakter tunggal
+
         const val = evaluateArithmetic(value);
         if (val !== null && !isNaN(val)) {
             mapping[key] = val;
@@ -358,7 +366,6 @@ function parseMappingM(content) {
     return mapping;
 }
 
-// REVISED: Perbaikan exponent dan threshold
 function decodeWeAreDevsString(encoded, charToVal) {
     let X = 0, D = 0;
     const bytes = [];
@@ -371,7 +378,7 @@ function decodeWeAreDevsString(encoded, charToVal) {
         }
         const val = charToVal[ch];
         if (val !== undefined) {
-            X += val * Math.pow(64, 3 - D);  // exponent 3-D
+            X += val * Math.pow(64, 3 - D);
             D++;
             if (D === 4) {
                 D = 0;
@@ -379,7 +386,8 @@ function decodeWeAreDevsString(encoded, charToVal) {
                 X = 0;
             }
         } else {
-            break;
+            // Karakter tidak dikenal, hentikan dan kembalikan kosong
+            return '';
         }
     }
     return bytes.map(b => String.fromCharCode(b)).join('');
@@ -406,6 +414,9 @@ function tryDecodeWeAreDevs(code) {
         const jsStr = luaStringToJs(s);
         return decodeWeAreDevsString(jsStr, charToVal);
     });
+
+    // Jika semua hasil kosong, jangan ubah (kemungkinan gagal)
+    if (decodedStrings.every(s => s === '')) return code;
 
     // Bangun tabel m baru
     const newMTable = 'local m={' + decodedStrings.map(s => jsStringToLua(s)).join(',') + '}';
