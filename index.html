@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaimDeobf v2 - Lua Deobfuscator + XOR Decoder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BaimDeobf <span style="font-size:1.2rem; color:var(--accent)">v2</span></h1>
+            <p class="tagline">Lua Deobfuscator &amp; XOR Loop Decoder</p>
+        </header>
+        <main>
+            <div class="editor-pane">
+                <label for="input">Kode Lua Terobfuscation</label>
+                <textarea id="input" placeholder="Tempel kode Lua di sini..."></textarea>
+                <div class="options">
+                    <label class="checkbox"><input type="checkbox" id="removeComments" checked> Hapus Komentar</label>
+                    <label class="checkbox"><input type="checkbox" id="decodeEscapes" checked> Decode Escape String</label>
+                    <label class="checkbox"><input type="checkbox" id="decodeBase64"> Coba Decode Base64</label>
+                    <label class="checkbox"><input type="checkbox" id="renameVars"> Rename Variabel Pendek</label>
+                    <label class="checkbox"><input type="checkbox" id="autoXor" checked> Auto Decode XOR Loop</label>
+                </div>
+                <div class="actions">
+                    <button id="deobfBtn" class="btn-primary">Deobfuscate</button>
+                    <button id="clearBtn" class="btn-secondary">Clear</button>
+                    <button id="sampleBtn" class="btn-secondary">Muat Contoh XOR</button>
+                </div>
+            </div>
+            <div class="editor-pane">
+                <label for="output">Hasil Deobfuscation</label>
+                <textarea id="output" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+                <div class="actions">
+                    <button id="copyBtn" class="btn-secondary">Salin Hasil</button>
+                </div>
+                <div id="status"></div>
+            </div>
+        </main>
+        <footer>
+            <p>BaimDeobf v2.0 - Dilengkapi Auto Decode XOR Loop untuk obfuscator sederhana</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
