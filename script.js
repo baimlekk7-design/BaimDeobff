@@ -337,7 +337,7 @@ function evaluateArithmetic(expr) {
 
 function parseMappingM(content) {
     const mapping = {};
-    // Regex yang lebih presisi: key identifier atau ["..."]/['...']
+    // Regex yang lebih presisi
     const entryRegex = /([A-Za-z_][A-Za-z0-9_]*|\[\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')\s*\])\s*=\s*([^,;}\n]+)/g;
     let m;
     while ((m = entryRegex.exec(content)) !== null) {
@@ -374,7 +374,10 @@ function decodeWeAreDevsString(encoded, charToVal) {
             break;
         }
         const val = charToVal[ch];
-        if (val === undefined) continue; // skip karakter tak dikenal
+        if (val === undefined) {
+            // Jika ada karakter tidak dikenal, gagal total
+            return '';
+        }
         X += val * Math.pow(64, 3 - D);
         D++;
         if (D === 4) {
@@ -408,8 +411,25 @@ function tryDecodeWeAreDevs(code) {
         return decodeWeAreDevsString(jsStr, charToVal);
     });
 
-    // Jika semua hasil kosong, jangan ubah
+    // Validasi hasil decode
     if (decodedStrings.every(s => s === '')) return code;
+
+    // Periksa apakah banyak string yang tidak wajar (non-printable)
+    let totalChars = 0;
+    let nonPrintable = 0;
+    decodedStrings.forEach(s => {
+        for (let i = 0; i < s.length; i++) {
+            totalChars++;
+            const code = s.charCodeAt(i);
+            if (code < 32 && code !== 9 && code !== 10 && code !== 13) {
+                nonPrintable++;
+            }
+        }
+    });
+    if (totalChars > 0 && nonPrintable / totalChars > 0.2) {
+        // Terlalu banyak karakter aneh, anggap gagal
+        return code;
+    }
 
     // Bangun tabel m baru
     const newMTable = 'local m={' + decodedStrings.map(s => jsStringToLua(s)).join(',') + '}';
