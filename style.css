@@ -177,6 +177,72 @@ button {
     min-height: 20px;
 }
 
+/* Terminal Panel */
+.terminal-pane {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.btn-terminal {
+    background: #2a2f3e;
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.terminal-input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#terminalInput {
+    flex: 1;
+    background: #11141c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: var(--text);
+    font-family: 'Consolas', monospace;
+    font-size: 14px;
+}
+
+#terminalInput:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.terminal-output {
+    background: #0b0e14;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    color: #b0c7ff;
+}
+
 footer {
     text-align: center;
     color: var(--text-muted);
